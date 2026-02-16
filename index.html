@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fogon el fueguito</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+<div class="banner">
+  <img src="img/banner.jpg">
+</div>
+
+<div class="header">
+  <img src="img/logo.png" class="logo">
+  <h1>Fogon el fueguito</h1>
+</div>
+
+<div class="tabs">
+  <a href="#antojitos">Antojitos</a>
+</div>
+
+<section id="antojitos" class="section">
+  <h2>Antojitos</h2>
+
+
+  <!-- SUBCATEGORIA COMIDAS -->
+  <h3 class="subtitulo">Comidas</h3>
+  <div class="products">
+
+<div class="card special-product"
+     data-name="Pollo empanizado"
+     data-options='[
+       {"label":"1 ración","price":140},
+       {"label":"2 raciones","price":280},
+       {"label":"3 raciones","price":420}
+     ]'>
+
+  <div class="img-container">
+    <img src="img/polloempanizado.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Pollo empanizado</h4>
+
+  <p class="product-description">
+    Elige las raciones
+  </p>
+
+  <p class="price">Desde $140</p>
+
+</div>
+
+
+
+	<div class="card" data-name="Cerdo empanizado" data-price="0">
+  <div class="img-container">
+    <img src="img/cerdoempanizado.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Cerdo empanizado</h4>
+
+  <p class="product-description">
+    Rellena de..
+  </p>
+
+  <p class="price">$0.00</p>
+
+  <input 
+    type="text" 
+    class="sugerencia-input" 
+    placeholder="Agregar sugerencia (ej: sin cebolla)"
+  >
+</div>
+
+
+<div class="card special-product"
+     data-name="Mondongo"
+     data-options='[
+       {"label":"1/2 L","price":80},
+       {"label":"1 L","price":130}
+     ]'>
+
+  <div class="img-container">
+    <img src="img/mondongo.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Mondongo</h4>
+
+  <p class="product-description">
+    Elige la porción
+  </p>
+
+  <p class="price">Desde $80</p>
+
+
+
+  
+</div>
+
+
+<div class="card" data-name="Birria" data-price="0">
+  <div class="img-container">
+    <img src="img/birria.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Birria</h4>
+
+  <p class="product-description">
+    Rellena de..
+  </p>
+
+  <p class="price">$0.00</p>
+
+  <input 
+    type="text" 
+    class="sugerencia-input" 
+    placeholder="Agregar sugerencia (ej: sin cebolla)"
+  >
+</div>
+
+<div class="card" data-name="Carne asada" data-price="0">
+  <div class="img-container">
+    <img src="img/carneasada.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Carne asada</h4>
+
+  <p class="product-description">
+    Rellena de..
+  </p>
+
+  <p class="price">$0.00</p>
+
+  <input 
+    type="text" 
+    class="sugerencia-input" 
+    placeholder="Agregar sugerencia (ej: sin cebolla)"
+  >
+</div>
+
+<div class="card special-product"
+     data-name="Costilla asada"
+     data-options='[
+       {"label":"1/4 kg","price":140},
+       {"label":"1/2 kg","price":220},
+       {"label":"3/4 kg","price":300},
+       {"label":"1 kg","price":350}
+     ]'>
+  <div class="img-container">
+    <img src="img/costillaasada.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Costilla asada</h4>
+
+  <p class="product-description">
+    Toca para elegir cantidad
+  </p>
+
+  <p class="price">Desde $140.00</p>
+ 
+
+</div>
+
+
+
+<div class="card" data-name="Tortillas" data-price="0">
+  <div class="img-container">
+    <img src="img/tortilla.jpg">
+    <div class="badge">0</div>
+  </div>
+
+  <h4 class="product-name">Tortillas</h4>
+
+  <p class="product-description">
+    Rellena de..
+  </p>
+
+  <p class="price">$0.00</p>
+
+  <input 
+    type="text" 
+    class="sugerencia-input" 
+    placeholder="Agregar sugerencia (ej: sin cebolla)"
+  >
+</div>
+
+ </div>
+</section>
+
+<div class="cart-bar">
+  <div id="cart-summary">0 productos - $0.00</div>
+  <button id="openCart">Ir a canasta</button>
+</div>
+
+<div class="cart-modal" id="cartModal">
+  <div class="cart-header">
+    <h2>Tu pedido</h2>
+    <button id="closeCart">✕</button>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <input type="text" id="customerName" placeholder="Escribe tu nombre">
+
+<!-- ===== TIPO DE PEDIDO ===== -->
+<div class="order-section">
+  <p class="section-title">Tipo de pedido</p>
+
+  <div class="radio-group">
+    <label>
+      <input type="radio" name="orderType" value="domicilio">
+      Pedido a domicilio
+    </label>
+
+    <label>
+      <input type="radio" name="orderType" value="encargo">
+      Encargo
+    </label>
+  </div>
+</div>
+
+
+<!-- ===== DIRECCIÓN (SOLO DOMICILIO) ===== -->
+<div class="order-section" id="addressSection" style="display:none;">
+  <input type="text" id="address" placeholder="Dirección de entrega">
+
+  <button id="openMap" type="button">
+  📍 Elegir ubicación en mapa
+</button>
+
+<div id="mapModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+  
+  <div style="width:95%; height:80%; background:white; border-radius:20px; padding:10px; display:flex; flex-direction:column;">
+    
+    <div id="map" style="flex:1; border-radius:15px;"></div>
+
+    <button id="confirmLocation" style="margin-top:10px; padding:12px; border:none; border-radius:20px; background:#1db954; color:white; font-weight:bold;">
+      Confirmar ubicación
+    </button>
+
+    <button id="closeMap" style="margin-top:5px; padding:10px; border:none; border-radius:20px;">
+      Cancelar
+    </button>
+
+  </div>
+
+</div>
+
+</div>   <!-- aquí termina addressSection -->
+
+<!-- AQUI PEGA LO NUEVO 👇 -->
+
+<div class="order-section" id="pickupSection" style="display:none;">
+
+  <p class="section-title">Recoger en tienda</p>
+
+  <div class="store-item">
+    <label class="store-radio">
+      <input type="radio" name="pickupStore" value="Tienda 1">
+      <span class="store-name">Tienda 1</span>
+    </label>
+
+    <span class="store-address">Calle 123, Centro</span>
+
+    <a 
+      href="https://maps.google.com/?q=19.4326,-99.1332"
+      target="_blank"
+      class="store-link"
+    >
+      📍 Ver ubicación
+    </a>
+  </div>
+
+  <div class="store-item">
+    <label class="store-radio">
+      <input type="radio" name="pickupStore" value="Tienda 1">
+      <span class="store-name">Tienda 1</span>
+    </label>
+
+    <span class="store-address">Calle 123, Centro</span>
+
+    <a 
+      href="https://maps.google.com/?q=19.4326,-99.1332"
+      target="_blank"
+      class="store-link"
+    >
+      📍 Ver ubicación
+    </a>
+  </div>
+	  
+</div>
+
+
+
+
+<!-- ===== FORMA DE PAGO ===== -->
+
+<div class="order-section">
+  <p class="section-title">Forma de pago</p>
+
+  <div class="radio-group">
+    <label>
+      <input type="radio" name="paymentType" value="efectivo">
+      Efectivo
+    </label>
+
+    <label>
+      <input type="radio" name="paymentType" value="transferencia">
+      Transferencia
+    </label>
+  </div>
+
+  <!-- DATOS DE TRANSFERENCIA -->
+  <div id="datos-transferencia">
+    <div class="transfer-box">
+      <p><strong>Banco:</strong> BBVA</p>
+      <p><strong>Cuenta:</strong> 0123456789</p>
+      <p><strong>CLABE:</strong> 012345678901234567</p>
+      <p><strong>Nombre:</strong> Chef</p>
+    </div>
+  </div>
+</div>
+  <div id="campo-cambio" style="display:none; margin-top:10px;">
+    <p class="section-title">¿Requiere cambio?</p>
+
+    <label>
+      <input type="radio" name="requiereCambio" value="si">
+      Sí
+    </label>
+
+    <label>
+      <input type="radio" name="requiereCambio" value="no">
+      No
+    </label>
+
+    <input
+      type="number"
+      id="monto-cambio"
+      placeholder="¿Cambio de cuánto?"
+      style="display:none; width:100%; padding:10px;"
+    >
+  </div>
+
+
+
+  <button id="sendOrder">Enviar por WhatsApp</button>
+</div>
+
+<div class="toast" id="toast">Producto agregado ✅</div>
+
+<!-- MODAL UNIVERSAL -->
+<div id="productModal" class="costilla-modal">
+
+  <div class="costilla-content">
+
+    <h3 id="modalTitle">Seleccionar</h3>
+
+    <div class="weight-controls">
+      <button id="modalMinus">−</button>
+      <span id="modalLabel">1</span>
+      <button id="modalPlus">+</button>
+    </div>
+
+    <p id="modalPrice">$0.00</p>
+
+    <input 
+      type="text" 
+      id="modalComment"
+      placeholder="Agregar comentario (ej: sin cebolla)"
+      class="modal-comment"
+    />
+
+    <div class="modal-buttons">
+      <button id="modalCancel">Cancelar</button>
+      <button id="modalAdd">Agregar</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
