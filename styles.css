@@ -622,4 +622,109 @@ body{
 }
 
 
+.custom-modal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.custom-modal-content{
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 20px;
+  animation: scaleIn 0.2s ease;
+}
+
+.custom-modal-body{
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.custom-modal-buttons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-modal-buttons button{
+  flex: 1;
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+}
+
+#customConfirm{
+  background: #1db954;
+  color: white;
+}
+
+#customCancel{
+  background: #eee;
+}
+
+@keyframes scaleIn{
+  from{ transform: scale(0.8); opacity:0; }
+  to{ transform: scale(1); opacity:1; }
+}
+.remove-btn {
+  background-color: #e53935; /* rojo elegante */
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+
+  transition: 0.2s ease;
+}
+
+.remove-btn:hover {
+  background-color: #c62828;
+  transform: scale(1.1);
+}
+#closeCart {
+  background: linear-gradient(135deg, #ff4d4d, #c62828);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: all 0.2s ease;
+}
+
+#closeCart:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+
+#closeCart:active {
+  transform: scale(0.95);
+}
 

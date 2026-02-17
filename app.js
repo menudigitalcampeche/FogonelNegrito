@@ -66,44 +66,6 @@ if (customerNameInput) {
 }
 
 
-
-
-
-/* ===== AGREGAR ===== */
-/* ===== AGREGAR ===== */
-cards.forEach(card => {
-  card.addEventListener("click", () => {
-	  
-	 
-
-    // 🚫 Si es producto especial no usar click normal
-     if (card.className.includes("special-")) return;
-
-
-
-    const name = card.dataset.name;
-    const price = Number(card.dataset.price);
-    const noteInput = card.querySelector(".sugerencia-input");
-    const note = noteInput ? noteInput.value.trim() : "";
-
-    if (!cart[name]) {
-      cart[name] = { qty: 0, price, note: "" };
-    }
-
-    cart[name].qty++;
-    total += price;
-
-    // Siempre actualizar la nota si hay texto
-    cart[name].note = note;
-
-    saveData();
-    restoreBadges();
-    showToast();
-    updateCart();
-
-  });
-});
-
 /* ===== CARRITO ===== */
 function updateCart() {
   if (!summary || !cartItems) return;
@@ -120,10 +82,12 @@ cartItems.innerHTML += `
     <span class="item-name">${item}</span>
 
     <div class="qty-controls">
-      <button class="minus-btn" data-item="${item}">−</button>
-      <span>${cart[item].qty}</span>
-      <button class="plus-btn" data-item="${item}">+</button>
-    </div>
+  <button class="minus-btn" data-item="${item}">−</button>
+  <span>${cart[item].qty}</span>
+  <button class="plus-btn" data-item="${item}">+</button>
+  <button class="remove-btn" data-item="${item}">✕</button>
+</div>
+
 
     <span class="item-price">$${subtotal}</span>
   </div>
@@ -148,19 +112,61 @@ document.querySelectorAll(".plus-btn").forEach(btn => {
 // ➖ RESTAR
 document.querySelectorAll(".minus-btn").forEach(btn => {
   btn.onclick = () => {
-    const item = btn.dataset.item;
-    cart[item].qty--;
-    total -= cart[item].price;
 
-    if (cart[item].qty <= 0) {
-      delete cart[item];
+    const item = btn.dataset.item;
+
+    if (cart[item].qty > 1) {
+
+      cart[item].qty--;
+      total -= cart[item].price;
+
+      saveData();
+      restoreBadges();
+      updateCart();
+
+    } else {
+
+      showCustomModal(
+        "Eliminar producto",
+        `<p>${item} tiene 1 unidad.<br>¿Deseas eliminarlo del carrito?</p>`,
+        () => {
+          total -= cart[item].price;
+          delete cart[item];
+
+          saveData();
+          restoreBadges();
+          updateCart();
+        }
+      );
+
     }
 
-    saveData();
-    restoreBadges();
-    updateCart();
   };
 });
+
+
+// ❌ ELIMINAR DIRECTO
+document.querySelectorAll(".remove-btn").forEach(btn => {
+  btn.onclick = () => {
+
+    const item = btn.dataset.item;
+
+    showCustomModal(
+      "Eliminar producto",
+      `<p>¿Seguro que deseas eliminar <strong>${item}</strong> del carrito?</p>`,
+      () => {
+        total -= cart[item].qty * cart[item].price;
+        delete cart[item];
+
+        saveData();
+        restoreBadges();
+        updateCart();
+      }
+    );
+
+  };
+});
+
 }
 
 /* ===== WHATSAPP ===== */
@@ -195,7 +201,7 @@ if (sendOrderBtn) {
 	
 
     // ✅ AHORA SÍ: crear el mensaje primero
-    let msg = "🍔 CHEF\n";
+    let msg = "🍔 Fogón el Negrito\n";
     msg += "Cliente: " + customerNameInput.value + "\n\n";
 
     for (let item in cart) {
@@ -243,7 +249,7 @@ if (sendOrderBtn) {
   }
 }
 
-    // 💳 FORMA DE PAGO
+  // 💳 FORMA DE PAGO
 if (paymentType.value === "transferencia") {
   msg += "\nForma de pago: Transferencia";
 } else {
@@ -255,64 +261,32 @@ if (paymentType.value === "transferencia") {
     msg += "\nNo requiere cambio";
   }
 }
-// ENVIAR A GOOGLE SHEETS
-const itemsArray = [];
 
-for (let item in cart) {
-  itemsArray.push({
-    nombre: item,
-    cantidad: cart[item].qty,
-    precio: cart[item].price
-  });
-}
+showCustomModal(
+  "Confirmar pedido 🧾",
+  `
+  <p>¿Estás seguro de enviar este pedido?</p>
+  <div style="text-align:left; max-height:200px; overflow:auto; margin-top:10px;">
+    <pre style="white-space:pre-wrap;">${msg}</pre>
+  </div>
+  `,
+  () => {
 
-	// 🔒 BLOQUEAR BOTÓN
-	sendOrderBtn.disabled = true;
-	const textoOriginal = sendOrderBtn.innerText;
-	sendOrderBtn.innerText = "Enviando pedido...";
-	sendOrderBtn.style.opacity = "0.6";
+    window.location.href =
+      "https://wa.me/529811064643?text=" + encodeURIComponent(msg);
 
-fetch("https://script.google.com/macros/s/AKfycbzEDYG-2MqOxecjjsJ-3DBkn_H5afBTxEIa-dNW6rtXwvg8k_LYmvCeSsUjP63H_SZq/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: new URLSearchParams({
-    cliente: customerNameInput.value,
-    items: JSON.stringify(itemsArray)
-  })
-})
-.then(res => res.text())
-.then(data => {
+    // Limpiar carrito
+    cart = {};
+    total = 0;
+    saveData();
+    restoreBadges();
+    updateCart();
 
-  console.log("Respuesta de Sheets:", data);
-
-  if (data !== "OK") {
-    throw new Error("No respondió OK");
   }
+);
 
-  // 🧹 Limpiar carrito
-  cart = {};
-  total = 0;
-  saveData();
-  restoreBadges();
-  updateCart();
 
-  // 📲 Ir a WhatsApp
-  window.location.href =
-    "https://wa.me/529811064643?text=" + encodeURIComponent(msg);
 
-})
-.catch(error => {
-
-  console.error("Error al guardar en Sheets:", error);
-  alert("Hubo un problema guardando el pedido");
-
-  // 🔓 REACTIVAR BOTÓN
-  sendOrderBtn.disabled = false;
-  sendOrderBtn.innerText = textoOriginal;
-  sendOrderBtn.style.opacity = "1";
-});
   };
 }
 
@@ -419,10 +393,28 @@ paymentRadios.forEach(radio => {
       campoCambio.style.display = "block";
       datosTransferencia.style.display = "none";
     } else {
+
+  showCustomModal(
+    "Instrucción para Pago por transferencia 💳",
+    `
+    <ol style="text-align:left; padding-left:15px;">
+      <li>Selecciona el metodo de pago con transferencia.</li>
+      <li>Espera a que confirmemos disponibilidad de productos.</li>
+	  <li>Una vez se confirme la disponibilidad de los productos te mandaremos el total.</li>
+	  <li>Realiza el pago por transferencia.</li>
+      <li>Envía tu comprobante por WhatsApp.</li>
+      <li>Tu pedido comenzará a prepararse al validar el pago.</li>
+    </ol>
+    `,
+    () => {
       campoCambio.style.display = "none";
       montoCambio.style.display = "none";
       datosTransferencia.style.display = "block";
     }
+  );
+
+}
+
 
   });
 });
@@ -442,9 +434,26 @@ orderTypeRadios.forEach(radio => {
   radio.addEventListener("change", function () {
 
     if (this.value === "domicilio") {
+
+  showCustomModal(
+    "Servicio a domicilio 🚚",
+    `
+    <p>
+      El costo del envío puede variar dependiendo de la distancia 
+      entre tu ubicación y el restaurante.
+    </p>
+    <p>
+      Nuestro equipo confirmará el monto exacto por WhatsApp antes de preparar tu pedido.
+    </p>
+    `,
+    () => {
       addressSection.style.display = "block";
       pickupSection.style.display = "none";
-    } 
+    }
+  );
+
+}
+
     else if (this.value === "encargo") {
       addressSection.style.display = "none";
       pickupSection.style.display = "block";
@@ -626,6 +635,29 @@ modalAdd.onclick = () => {
 
   productModal.style.display = "none";
 };
+
+function showCustomModal(title, bodyHTML, onConfirm){
+
+  const modal = document.getElementById("customModal");
+  const modalTitle = document.getElementById("customModalTitle");
+  const modalBody = document.getElementById("customModalBody");
+  const confirmBtn = document.getElementById("customConfirm");
+  const cancelBtn = document.getElementById("customCancel");
+
+  modalTitle.innerText = title;
+  modalBody.innerHTML = bodyHTML;
+
+  modal.style.display = "flex";
+
+  confirmBtn.onclick = () => {
+    modal.style.display = "none";
+    onConfirm();
+  };
+
+  cancelBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+}
 
 
 });
